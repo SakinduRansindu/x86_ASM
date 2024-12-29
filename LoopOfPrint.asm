@@ -14,7 +14,7 @@ _start:
 loop_a:
     pop eax     ;restore preserved eax value
     add eax, 1
-    cmp eax, 5
+    cmp eax, 100
     push eax    ;preserve the eax befor systemcall
     jle write
     jmp exit    
