@@ -25,14 +25,14 @@ if [ $# -ge 1 ]; then
     nasm -f elf32 "$1" -o program.o
     [ "$VERBOS" -ge 2 ] && echo "done"
     [ "$VERBOS" -ge 2 ] && echo "linking..."
-    ld -m elf_i386 program.o -o program
+    ld -m elf_i386 program.o -o program.elf
     [ "$VERBOS" -ge 2 ] && echo "done"
     [ "$VERBOS" -ge 2 ] && echo "removing object code"
     rm program.o
     [ "$VERBOS" -ge 2 ] && echo "executing program"
     [ "$VERBOS" -ge 1 ] && echo ""
     [ "$VERBOS" -ge 1 ] && echo "==================================="
-    ./program
+    ./program.elf
     [ "$VERBOS" -ge 1 ] && echo "==================================="
     [ "$VERBOS" -ge 1 ] && echo "Program exited with exit code $?"
     [ "$VERBOS" -ge 1 ] && echo ""
