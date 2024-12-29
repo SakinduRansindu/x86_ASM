@@ -8,13 +8,16 @@ section .text
 
 _start:
     mov eax, 0
-    jmp loop_a
+    push eax
+    jmp loop_a 
 
 loop_a:
+    pop eax     ;restore preserved eax value
     add eax, 1
     cmp eax, 5
-    jl write
-    jmp exit
+    push eax    ;preserve the eax befor systemcall
+    jle write
+    jmp exit    
 
 
 
