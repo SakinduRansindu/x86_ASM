@@ -83,8 +83,6 @@ read3:                               ;Read the number input from the keyboard. (
 
 
 
-
-
 clear_input_buffer:
     ; Continuously read until no more input (newline or EOF)
 .loop:
