@@ -15,9 +15,9 @@ global _start
 section .text
 
 _start:
-    jmp write1
+    jmp prompt
 
-write1:
+prompt:
     mov eax, 4
     mov edx, 8
     lea ecx, [INPUT_PROMPT]
