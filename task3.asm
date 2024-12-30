@@ -7,12 +7,16 @@ section .data
     INPUT_PROMPT2 db "Enter the number2: "
     OUT_MSG db "Answer: "
     char_count db 0
+    reader_pointer db 0
+    integer_result dd 0   
+
 
 section .bss
     number1 resb 8
     number2 resb 8
     number resb 8
     oporation resb 1
+    buffer resb 8   
 
     char_out resb 1
     temp resb 1  ; Temporary buffer to store one character at a time
@@ -34,13 +38,10 @@ prompt1:
     jmp read1
 
 read1:                               ;Read the number input from the keyboard. (reading only one digit number)
-    mov eax, 3
-    mov ebx, 0
-    mov ecx, number1
-    mov edx, 1
-    int 0x80
-    mov eax, [number1]
-    sub eax, 48
+    mov byte [reader_pointer], 0
+    mov dword [integer_result], 0
+    call read_multiDigitNum
+    mov eax, [integer_result]
     mov [number1],eax
     call clear_input_buffer
     jmp prompt2
@@ -54,13 +55,10 @@ prompt2:
     jmp read2
 
 read2:                               ;Read the number input from the keyboard. (reading only one digit number)
-    mov eax, 3
-    mov ebx, 0
-    mov ecx, number2
-    mov edx, 1
-    int 0x80
-    mov eax, [number2]
-    sub eax, 48
+    mov byte [reader_pointer], 0
+    mov dword [integer_result], 0
+    call read_multiDigitNum
+    mov eax, [integer_result]
     mov [number2],eax
     call clear_input_buffer
     jmp prompt3
@@ -208,6 +206,53 @@ print_newline:          ; go to next line
     mov edx, 1
     int 0x80           
     jmp exit
+
+; Below code will read multi digit number from stdin (upto 10 digits)
+; store the number in integer_result variable
+; buffer variable and reader_pointer should be created
+
+read_multiDigitNum:
+    mov eax, 3
+    mov ebx, 0
+    lea ecx, [buffer]
+    mov edx, 10                       ; Read up to 10 characters
+    int 0x80
+    jmp convertToInt_init
+
+convertToInt_init:
+    ; Convert input to integer
+    xor eax, eax                      ; Clear result
+    xor ebx, ebx                      ; Index for processing input
+    mov ecx, [buffer]
+    jmp convertToInt_loop
+
+convertToInt_loop:
+    sub cl, '0' 
+
+    cmp cl, 0                        ; Check if character is less than '0'
+    jl done_conversion
+    cmp cl, 9                        ; Check if character is greater than '9'
+    jg done_conversion
+
+
+    xor eax, eax
+    mov al , byte [integer_result]         ; Load current integer result
+    mov bl , 10
+    mul bl
+    add al, cl                      ; Add new digit value
+    mov [integer_result], al         ; Store updated result
+
+    xor eax, eax
+    mov al, byte [reader_pointer]
+    inc al
+    mov [reader_pointer], al
+    mov ecx, [buffer+eax]
+
+    jmp convertToInt_loop
+
+
+done_conversion:
+    ret
 
 exit:
     mov eax, 1

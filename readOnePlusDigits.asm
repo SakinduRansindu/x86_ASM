@@ -17,20 +17,30 @@ _start:
     lea ecx, [input_buffer]
     mov edx, 14
     int 0x80
+    call read_multiDigitNum
+    jmp exit
 
-    ; Read input
+exit:
+    mov eax, 1
+    mov ebx, 0
+    int 0x80
+
+read_multiDigitNum:
     mov eax, 3
     mov ebx, 0
     lea ecx, [buffer]
     mov edx, 10                       ; Read up to 10 characters
     int 0x80
+    jmp convertToInt_init
 
+convertToInt_init:
     ; Convert input to integer
     xor eax, eax                      ; Clear result
     xor ebx, ebx                      ; Index for processing input
     mov ecx, [buffer]
+    jmp convertToInt_loop
 
-convert_loop:
+convertToInt_loop:
     sub cl, '0' 
 
     cmp cl, 0                        ; Check if character is less than '0'
@@ -52,10 +62,8 @@ convert_loop:
     mov [reader_pointer], al
     mov ecx, [buffer+eax]
 
-    jmp convert_loop
+    jmp convertToInt_loop
 
 
 done_conversion:
-    mov eax, 1
-    lea ebx, [integer_result]
-    int 0x80
+    ret
