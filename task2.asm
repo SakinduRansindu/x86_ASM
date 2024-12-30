@@ -24,7 +24,7 @@ prompt:
     int 0x80
     jmp read
 
-read:                               ;Read the number input from the keyboard.
+read:                               ;Read the number input from the keyboard. (reading only one digit number)
     mov eax, 3
     mov ebx, 0
     mov ecx, number
@@ -35,7 +35,7 @@ read:                               ;Read the number input from the keyboard.
     mov [number],eax
     jmp multiply_init
 
-multiply_init:
+multiply_init:                  ; make the initial values for counters
     mov eax, 0
     mov ecx, 0
     mov edx, [number]
@@ -43,7 +43,7 @@ multiply_init:
     je update_final_value
     jmp multiply
 
-multiply:
+multiply:                       
     add eax, [number]
     inc ecx
     cmp ecx, MULTIPLIER
@@ -62,6 +62,8 @@ write:
     mov ebx, 1
     int 0x80
     jmp conv_num
+
+; creating ascii numbers stack for given number
 
 conv_num:
     mov eax, [number]           ; restore answer system_write use eax to store number of bytes writen
